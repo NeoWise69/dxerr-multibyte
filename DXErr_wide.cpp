@@ -3920,6 +3920,7 @@ HRESULT WINAPI DXTraceW( _In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HR
     WCHAR strBufferLine[128];
     WCHAR strBufferError[256];
     WCHAR strBuffer[BUFFER_SIZE];
+    WCHAR strBufferDescription[BUFFER_SIZE];
 
     swprintf_s( strBufferLine, 128, L"%lu", dwLine );
     if( strFile )
@@ -3927,6 +3928,8 @@ HRESULT WINAPI DXTraceW( _In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HR
        swprintf_s( strBuffer, BUFFER_SIZE, L"%ls(%ls): ", strFile, strBufferLine );
        OutputDebugStringW( strBuffer );
     }
+
+    DXGetErrorDescriptionW(hr, strBufferDescription, BUFFER_SIZE);
 
     size_t nMsgLen = (strMsg) ? wcsnlen_s( strMsg, 1024 ) : 0;
     if( nMsgLen > 0 )
@@ -3954,8 +3957,8 @@ HRESULT WINAPI DXTraceW( _In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HR
         if( nMsgLen > 0 )
             swprintf_s( strBufferMsg, 1024, L"Calling: %ls\n", strMsg );
 
-        swprintf_s( strBuffer, BUFFER_SIZE, L"File: %ls\nLine: %ls\nError Code: %ls\n%lsDo you want to debug the application?",
-                    strBufferFile, strBufferLine, strBufferError, strBufferMsg );
+        swprintf_s( strBuffer, BUFFER_SIZE, L"File: %ls\nLine: %ls\nError Code: %ls\nDescription: %ls\n%lsDo you want to debug the application?",
+                    strBufferFile, strBufferLine, strBufferError, strBufferDescription, strBufferMsg );
 
         int nResult = MessageBoxW( GetForegroundWindow(), strBuffer, L"Unexpected error encountered", MB_YESNO | MB_ICONERROR );
         if( nResult == IDYES )
